@@ -1,4 +1,4 @@
-using AutoMapper;
+
 using CandidateAPI.Mapping;
 using CandidateAPI.Data;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
 }
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
