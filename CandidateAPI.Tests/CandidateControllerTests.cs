@@ -20,12 +20,6 @@ namespace CandidateAPI.Tests.Controllers
         {
             _serviceMock = new Mock<ICandidateService>();
 
-            // Use existing AutoMapper configuration
-            var mapperConfig = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<MappingProfile>();  // Use main project's profile
-            });
-            var mapper = mapperConfig.CreateMapper();
 
             _controller = new CandidateController(_serviceMock.Object);
         }
@@ -59,7 +53,8 @@ namespace CandidateAPI.Tests.Controllers
             var result = await _controller.UpsertCandidate(candidateDto);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, badRequestResult.StatusCode);
         }
     }
 }
