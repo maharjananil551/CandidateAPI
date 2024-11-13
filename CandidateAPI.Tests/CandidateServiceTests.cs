@@ -83,7 +83,7 @@ namespace CandidateAPI.Tests
                 LastName = "Doe"
             };
             _mockRepository.Setup(x => x.GetByEmailAsync(candidateDto.Email)).ReturnsAsync(existingCandidate);
-            _mockRepository.Setup(x => x.UpdateAsync(It.IsAny<Candidate>())).Returns(Task.CompletedTask);
+            _mockRepository.Setup(x => x.Update(It.IsAny<Candidate>())).Verifiable();
             _mockRepository.Setup(x => x.SaveChangesAsync()).Returns(Task.CompletedTask);
 
             // Act
@@ -93,7 +93,7 @@ namespace CandidateAPI.Tests
             Assert.NotNull(result);
             Assert.Equal("Updated", result.OperationType);
             Assert.Equal("test@example.com", result.Email);
-            _mockRepository.Verify(x => x.UpdateAsync(It.IsAny<Candidate>()), Times.Once);
+            _mockRepository.Verify(x => x.Update(It.IsAny<Candidate>()), Times.Once);
             _mockRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
 
@@ -148,6 +148,24 @@ namespace CandidateAPI.Tests
             _mockCache.Verify(x => x.Exists(email), Times.Once);
             _mockRepository.Verify(x => x.GetByEmailAsync(email), Times.Once);
             _mockCache.Verify(x => x.Set(email, candidate,null), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpsertCandidateAsync_WhenEmailIsNull_ShouldThrowArgumentException()
+        {
+            // Arrange
+            var candidateDto = new CandidateRequestDTO
+            {
+                Email = null, // Invalid email
+                FirstName = "John",
+                LastName = "Doe"
+            };
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _candidateService.UpsertCandidateAsync(candidateDto));
+
+            // Assert
+            Assert.Equal("Email is required (Parameter 'Email')", exception.Message);
         }
     }
 }

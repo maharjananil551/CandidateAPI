@@ -16,7 +16,7 @@ namespace CandidateAPI.Repositories
 
         public async Task<Candidate> GetByEmailAsync(string email)
         {
-            return await _context.Candidates.SingleOrDefaultAsync(c => c.Email == email);
+            return await _context.Candidates.SingleOrDefaultAsync(c => c.Email == email)??new Candidate();
         }
 
         public async Task AddAsync(Candidate candidate)
@@ -24,10 +24,15 @@ namespace CandidateAPI.Repositories
             await _context.Candidates.AddAsync(candidate);
         }
 
-        public async Task UpdateAsync(Candidate candidate)
+
+        public void Update(Candidate candidate)
         {
-             _context.Candidates.Update(candidate);
+            _context.Candidates.Update(candidate);
         }
+        //public async Task UpdateAsync(Candidate candidate)
+        //{
+        //     _context.Candidates.Update(candidate);
+        //}
 
         public async Task SaveChangesAsync()
         {

@@ -7,7 +7,8 @@ namespace CandidateAPI.Repositories
     {
         Task<Candidate> GetByEmailAsync(string email);
         Task AddAsync(Candidate candidate);
-        Task UpdateAsync(Candidate candidate);
+        //Task UpdateAsync(Candidate candidate);
+        void Update(Candidate candidate);
         Task SaveChangesAsync();
     }
 }
