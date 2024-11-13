@@ -9,7 +9,7 @@ This API allows you to:
 - **Cache** candidate data for improved performance.
 - **Handle exceptions** and log them globally.
 
-It follows the repository pattern and uses an in-memory cache to avoid frequent database hits. The application is structured to allow easy updates to both the data layer and the caching layer.
+The application follows the repository pattern and uses an in-memory cache implemented with a hashtable to avoid frequent database hits, optimizing performance with O(1) time complexity for cache lookups.
 
 ## Technologies
 
