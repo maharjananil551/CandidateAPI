@@ -35,8 +35,8 @@ It follows the repository pattern and uses an in-memory cache to avoid frequent 
 2.Open project in Visual Studio and build it to restore package
 
 3.Run Migration to setup databse with command
-  Add-Migration InitialCreate_CandidatApi
-  Update-Database
+  **Add-Migration InitialCreate_CandidatApi
+  **Update-Database
 
 
 4.Run project will should be able to see Swagger Page where you can test api
