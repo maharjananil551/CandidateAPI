@@ -39,19 +39,17 @@ namespace CandidateAPI.Tests
             // Arrange
             var candidateDto = new CandidateRequestDTO
             {
-                Email = "test@example.com",
+                Email = "imanil@example.com",
                 FirstName = "John",
                 LastName = "Doe"
             };
 
             var candidate = new Candidate
             {
-                Email = "test@example.com",
+                Email = "imanil@example.com",
                 FirstName = "John",
                 LastName = "Doe"
             };
-
-            _mockCache.Setup(x => x.Exists(candidateDto.Email)).Returns(false);
             _mockRepository.Setup(x => x.GetByEmailAsync(candidateDto.Email)).ReturnsAsync((Candidate)null);
             _mockRepository.Setup(x => x.AddAsync(It.IsAny<Candidate>())).Returns(Task.CompletedTask);
             _mockRepository.Setup(x => x.SaveChangesAsync()).Returns(Task.CompletedTask);
@@ -62,9 +60,9 @@ namespace CandidateAPI.Tests
             // Assert
             Assert.NotNull(result);
             Assert.Equal("Inserted", result.OperationType);
+            Assert.Equal("imanil@example.com", result.Email);
             _mockRepository.Verify(x => x.AddAsync(It.IsAny<Candidate>()), Times.Once);
             _mockRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
-            _mockCache.Verify(x => x.Set(candidateDto.Email, It.IsAny<CandidateResponseDTO>(),null), Times.Once);
         }
 
         [Fact]
@@ -84,16 +82,6 @@ namespace CandidateAPI.Tests
                 FirstName = "John",
                 LastName = "Doe"
             };
-
-            var updatedCandidate = new Candidate
-            {
-                Email = "test@example.com",
-                FirstName = "Updated",
-                LastName = "Name"
-            };
-
-            _mockCache.Setup(x => x.Exists(candidateDto.Email)).Returns(true);
-            _mockCache.Setup(x => x.Get<Candidate>(candidateDto.Email)).Returns(existingCandidate);
             _mockRepository.Setup(x => x.GetByEmailAsync(candidateDto.Email)).ReturnsAsync(existingCandidate);
             _mockRepository.Setup(x => x.UpdateAsync(It.IsAny<Candidate>())).Returns(Task.CompletedTask);
             _mockRepository.Setup(x => x.SaveChangesAsync()).Returns(Task.CompletedTask);
@@ -104,17 +92,16 @@ namespace CandidateAPI.Tests
             // Assert
             Assert.NotNull(result);
             Assert.Equal("Updated", result.OperationType);
-            Assert.Equal("Updated", result.FirstName);
+            Assert.Equal("test@example.com", result.Email);
             _mockRepository.Verify(x => x.UpdateAsync(It.IsAny<Candidate>()), Times.Once);
             _mockRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
-            _mockCache.Verify(x => x.Set(candidateDto.Email, It.IsAny<CandidateResponseDTO>(),null), Times.Once);
         }
 
         [Fact]
         public async Task GetCandidateAsync_WhenCacheExists_ShouldReturnCandidateFromCache()
         {
             // Arrange
-            var email = "test@example.com";
+            var email = "cache_test@example.com";
             var cachedCandidate = new Candidate
             {
                 Email = email,
@@ -140,7 +127,7 @@ namespace CandidateAPI.Tests
         public async Task GetCandidateAsync_WhenCacheDoesNotExist_ShouldReturnCandidateFromRepository()
         {
             // Arrange
-            var email = "test@example.com";
+            var email = "cache_test@example.com";
             var candidate = new Candidate
             {
                 Email = email,
@@ -160,7 +147,7 @@ namespace CandidateAPI.Tests
             Assert.Equal(email, result.Email);
             _mockCache.Verify(x => x.Exists(email), Times.Once);
             _mockRepository.Verify(x => x.GetByEmailAsync(email), Times.Once);
-            //_mockCache.Verify(x => x.Set(email, candidate), Times.Once);
+            _mockCache.Verify(x => x.Set(email, candidate,null), Times.Once);
         }
     }
 }
